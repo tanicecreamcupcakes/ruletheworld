@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      background-color: #222;
+      font-family: sans-serif;
+    }
+
+    .statBox {
+      background-color: black;
+      color: white;
+      border: 2px solid white;
+      padding: 8px 14px;
+      display: inline-block;
+      border-radius: 6px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    #clickBtn {
+      background-color: pink;
+      border: 3px solid hotpink;
+      position: fixed;
+      left: 10px;
+      top: 320px;
+    }
+
+    #clickBtn:hover {
+      background-color: hotpink;
+      color: white;
+    }
+
+    #spendBtn {
+      background-color: lightblue;
+      border: 3px solid steelblue;
+    }
+
+    #spendBtn:hover {
+      background-color: steelblue;
+      color: white;
+    }
+
+    #sellBtn {
+      background-color: lightcoral;
+      border: 3px solid firebrick;
+    }
+
+    #sellBtn:hover {
+      background-color: firebrick;
+      color: white;
+    }
+
+    .partBtn {
+      background-color: lightgray;
+      border: 3px solid gray;
+    }
+
+    .partBtn:hover {
+      background-color: gray;
+      color: white;
+    }
+
+    #craftBtn {
+      background-color: gold;
+      border: 3px solid orange;
+      display: none;
+    }
+
+    #craftBtn:hover {
+      background-color: orange;
+      color: white;
+    }
+
+    #businessBtn {
+      background-color: lightgreen;
+      border: 3px solid seagreen;
+      display: none;
+    }
+
+    #businessBtn:hover {
+      background-color: seagreen;
+      color: white;
+    }
+
+    #employeeBtn {
+      background-color: plum;
+      border: 3px solid purple;
+      display: none;
+    }
+
+    #employeeBtn:hover {
+      background-color: purple;
+      color: white;
+    }
+
+    #landBtn {
+      background-color: sandybrown;
+      border: 3px solid sienna;
+      display: none;
+    }
+
+    #landBtn:hover {
+      background-color: sienna;
+      color: white;
+    }
+
+    #worldBtn {
+      background-color: cyan;
+      border: 3px solid darkcyan;
+      display: none;
+    }
+
+    #worldBtn:hover {
+      background-color: darkcyan;
+      color: white;
+    }
+
+    #foodBtn {
+      background-color: mediumspringgreen;
+      border: 3px solid darkgreen;
+      display: none;
+    }
+
+    #foodBtn:hover {
+      background-color: darkgreen;
+      color: white;
+    }
+
+    #peopleBox {
+      display: none;
+    }
+
+    #resetSaveBtn {
+      background-color: #444;
+      color: white;
+      border: 2px solid #888;
+      float: right;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="resetSaveBtn">Reset Save</button>
+
+  <p class="statBox">Score: <span id="scoreDisplay">0</span></p>
+  <p class="statBox">Amount of cars: <span id="carDisplay">0</span></p>
+  <p class="statBox">Cars made: <span id="carsMadeDisplay">0</span> / 10</p>
+  <p class="statBox">Income/sec: <span id="incomeDisplay">0</span></p>
+  <p class="statBox">Land: <span id="landDisplay">0</span>/10</p>
+  <p class="statBox" id="peopleBox"><span id="peopleDisplay">2</span> people</p>
+  <br>
+
+  <button id="spendBtn">Buy car (1200 points)</button>
+  <button id="sellBtn">Sell car (+600 points)</button>
+  <br>
+
+  <button id="metalBtn" class="partBtn">metal (300 points)</button>
+  <button id="wheelsBtn" class="partBtn">4 wheels (300 points)</button>
+  <button id="craftBtn">Make car? (+10,000 points)</button>
+  <br>
+
+  <button id="businessBtn">Make business? (+10,000/sec)</button>
+  <button id="employeeBtn">Hire Employee (20,000 points | +1,000/sec)</button>
+  <br>
+
+  <button id="landBtn">Own land? (Requires 1,000,000 score - Resets score)</button>
+  <button id="worldBtn">own the world?</button>
+  <button id="foodBtn">Food plants (+1 person / 5 sec)</button>
+
+  <button id="clickBtn">Click for +300</button>
+
+  <script>
+    // Game variables
+    let score = 0;
+    let cars = 0;
+    let carsMade = 0;
+    let pointsPerClick = 300;
+    let passiveIncome = 0;
+    let hasBusiness = false;
+    let hasMetal = false;
+    let hasWheels = false;
+
+    // Land & World variables
+    let land = 0;
+    let ownsWorld = false;
+    let people = 2;
+    let foodPlants = 0;
+
+    // Movement variables
+    let x = 10;
+    let y = 320;
+    let speedX = 1.5;
+    let speedY = 1.5;
+
+    // Grab HTML elements
+    const clickBtn = document.getElementById("clickBtn");
+    const spendBtn = document.getElementById("spendBtn");
+    const sellBtn = document.getElementById("sellBtn");
+    const metalBtn = document.getElementById("metalBtn");
+    const wheelsBtn = document.getElementById("wheelsBtn");
+    const craftBtn = document.getElementById("craftBtn");
+    const businessBtn = document.getElementById("businessBtn");
+    const employeeBtn = document.getElementById("employeeBtn");
+    const landBtn = document.getElementById("landBtn");
+    const worldBtn = document.getElementById("worldBtn");
+    const foodBtn = document.getElementById("foodBtn");
+    const resetSaveBtn = document.getElementById("resetSaveBtn");
+
+    const display = document.getElementById("scoreDisplay");
+    const carDisplay = document.getElementById("carDisplay");
+    const carsMadeDisplay = document.getElementById("carsMadeDisplay");
+    const incomeDisplay = document.getElementById("incomeDisplay");
+    const landDisplay = document.getElementById("landDisplay");
+    const peopleBox = document.getElementById("peopleBox");
+    const peopleDisplay = document.getElementById("peopleDisplay");
+
+    // Save all progress to browser storage
+    function saveGame() {
+      const saveData = {
+        score, cars, carsMade, pointsPerClick, passiveIncome,
+        hasBusiness, hasMetal, hasWheels, land, ownsWorld, people, foodPlants
+      };
+      localStorage.setItem("carTycoonSave", JSON.stringify(saveData));
+    }
+
+    // Load saved progress when page opens
+    function loadGame() {
+      const savedString = localStorage.getItem("carTycoonSave");
+      if (savedString !== null) {
+        const data = JSON.parse(savedString);
+        score = data.score ?? 0;
+        cars = data.cars ?? 0;
+        carsMade = data.carsMade ?? 0;
+        pointsPerClick = data.pointsPerClick ?? 300;
+        passiveIncome = data.passiveIncome ?? 0;
+        hasBusiness = data.hasBusiness ?? false;
+        hasMetal = data.hasMetal ?? false;
+        hasWheels = data.hasWheels ?? false;
+        land = data.land ?? 0;
+        ownsWorld = data.ownsWorld ?? false;
+        people = data.people ?? 2;
+        foodPlants = data.foodPlants ?? 0;
+      }
+      updateUI();
+    }
+
+    // Refresh all text and button visibility on screen
+    function updateUI() {
+      display.textContent = score.toLocaleString();
+      carDisplay.textContent = cars;
+      carsMadeDisplay.textContent = carsMade;
+      incomeDisplay.textContent = passiveIncome.toLocaleString();
+      landDisplay.textContent = land;
+      peopleDisplay.textContent = people;
+      clickBtn.textContent = "Click for +" + pointsPerClick;
+
+      metalBtn.textContent = hasMetal ? "metal (Owned)" : "metal (300 points)";
+      wheelsBtn.textContent = hasWheels ? "4 wheels (Owned)" : "4 wheels (300 points)";
+
+      craftBtn.style.display = (hasMetal && hasWheels) ? "inline-block" : "none";
+      businessBtn.style.display = (carsMade >= 10 && !hasBusiness) ? "inline-block" : "none";
+      employeeBtn.style.display = hasBusiness ? "inline-block" : "none";
+
+      // Show "Own land?" if score is 1,000,000+ and land is under 10
+      landBtn.style.display = (score >= 1000000 && land < 10) ? "inline-block" : "none";
+
+      // Show "own the world?" when land reaches 10
+      worldBtn.style.display = (land >= 10 && !ownsWorld) ? "inline-block" : "none";
+
+      // Show people counter and "Food plants" button after owning the world
+      if (ownsWorld) {
+        peopleBox.style.display = "inline-block";
+        foodBtn.style.display = "inline-block";
+      } else {
+        peopleBox.style.display = "none";
+        foodBtn.style.display = "none";
+      }
+    }
+
+    // Passive score income every 1 second
+    setInterval(function () {
+      if (passiveIncome > 0) {
+        score = score + passiveIncome;
+        updateUI();
+        saveGame();
+      }
+    }, 1000);
+
+    // Passive population growth every 5 seconds (5000 ms)
+    setInterval(function () {
+      if (ownsWorld && foodPlants > 0) {
+        people = people + foodPlants;
+        updateUI();
+        saveGame();
+      }
+    }, 5000);
+
+    // Start moving pink button slowly after 2 seconds
+    setTimeout(function () {
+      setInterval(function () {
+        x = x + speedX;
+        y = y + speedY;
+
+        if (x > window.innerWidth - 140 || x < 0) speedX = -speedX;
+        if (y > window.innerHeight - 50 || y < 0) speedY = -speedY;
+
+        clickBtn.style.left = x + "px";
+        clickBtn.style.top = y + "px";
+      }, 20);
+    }, 2000);
+
+    // Reset button position every 15 seconds
+    setInterval(function () {
+      x = 10;
+      y = 320;
+      clickBtn.style.left = x + "px";
+      clickBtn.style.top = y + "px";
+    }, 15000);
+
+    clickBtn.addEventListener("click", function () {
+      score = score + pointsPerClick;
+      updateUI();
+      saveGame();
+    });
+
+    spendBtn.addEventListener("click", function () {
+      if (score >= 1200) {
+        score = score - 1200;
+        cars = cars + 1;
+        pointsPerClick = pointsPerClick + 10;
+        updateUI();
+        saveGame();
+      } else {
+        alert("Not enough points! You need 1200.");
+      }
+    });
+
+    sellBtn.addEventListener("click", function () {
+      if (cars >= 1) {
+        cars = cars - 1;
+        score = score + 600;
+        pointsPerClick = pointsPerClick - 10;
+        updateUI();
+        saveGame();
+      } else {
+        alert("You don't have any cars to sell!");
+      }
+    });
+
+    metalBtn.addEventListener("click", function () {
+      if (hasMetal) {
+        alert("You already bought the metal!");
+      } else if (score >= 300) {
+        score = score - 300;
